@@ -45,11 +45,27 @@ vs.head()
 
 # grouping uncollapsed data by FIPS, year, death cause, and summing all deaths
 vs_collapsed = vs.groupby([vs['FIPS'], vs['Year'], vs['Drug/Alcohol Induced Cause'], vs['Drug/Alcohol Induced Cause Code']], as_index = False).sum()
-vs_collapsed.head()
-vs_collapsed.to_csv('vs_collapsed.csv')
 
 # 'Drug poisonings (overdose) Unintentional (X40-X44)': D1
 # 'Drug poisonings (overdose) Suicide (X60-X64)': D2
 # 'Drug poisonings (overdose) Homicide (X85)': D3
 # 'Drug poisonings (overdose) Undetermined (Y10-Y14)': D4
 
+state = vs_collapsed['County'].str.split(',', expand=True)
+vs_collapsed['State'] = state[1]
+
+drug_codes = ['D1', 'D2', 'D3', 'D4']
+vs_collapsed = vs_collapsed[vs_collapsed['Drug/Alcohol Induced Cause Code'].isin(drug_codes)]
+vs_collapsed = vs_collapsed.drop(['FIPS', 'Drug/Alcohol Induced Cause', 'County'], axis=1)
+vs_collapsed['Deaths'] = vs_collapsed['Deaths'].replace('Missing', 0)
+vs_collapsed['Deaths'] = vs_collapsed['Deaths'].astype(float)
+vs_collapsed['Year'] = vs_collapsed['Year'].astype(int)
+
+print(vs_collapsed.head())
+print(vs_collapsed.dtypes)
+
+vs_state_year = vs_collapsed.groupby([vs_collapsed['State'], vs_collapsed['Year']]).sum()
+vs_state_year.reset_index(inplace=True)
+vs_state_year.head()
+
+vs_state_year.to_csv('vs_state_year.csv')
