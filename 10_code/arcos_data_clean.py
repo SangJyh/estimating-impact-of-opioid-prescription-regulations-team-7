@@ -2,12 +2,13 @@
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-lst = ['fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms'] #
+lst = ['fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms'] 
+#create read list  ##backup 'fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn',
 for i in lst:
     os.chdir("C:\Duke")#set path to .gz file location
-    read_file = "arcos-{}-statewide-itemized.tsv.gz".format(i)
+    read_file = "arcos-{}-statewide-itemized.tsv.gz".format(i)#read file name
     print("now process {} data".format(i))
-    df = pd.read_csv("arcos-{}-statewide-itemized.tsv.gz".format(i), sep="\t")#read files
+    df = pd.read_csv(read_file, sep="\t")#read files
 #df.shape
 #list(df.columns.values)
 #take a look at elemants and column names
@@ -28,7 +29,7 @@ for i in lst:
 #df1.head()
 ######group data together#######
 ###### still in progress ######
-    df2 = df1.copy()#mak a copy
+#    df2 = df1.copy()#mak a copy
     df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month
     #df2.head()
 #df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
