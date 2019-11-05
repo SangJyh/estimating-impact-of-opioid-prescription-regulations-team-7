@@ -37,4 +37,19 @@ all_vital_statistics = all_vital_statistics.rename(columns={"County Code": "FIPS
 all_vital_statistics.sample(10)
 all_vital_statistics.shape
 
-all_vital_statistics.to_csv('all_vital_statistics.csv')
+# saving uncollapsed data to new csv
+# all_vital_statistics.to_csv('all_vital_statistics.csv')
+
+vs = pd.read_csv('all_vital_statistics.csv', index_col=0)
+vs.head()
+
+# grouping uncollapsed data by FIPS, year, death cause, and summing all deaths
+vs_collapsed = vs.groupby([vs['FIPS'], vs['Year'], vs['Drug/Alcohol Induced Cause'], vs['Drug/Alcohol Induced Cause Code']], as_index = False).sum()
+vs_collapsed.head()
+vs_collapsed.to_csv('vs_collapsed.csv')
+
+# 'Drug poisonings (overdose) Unintentional (X40-X44)': D1
+# 'Drug poisonings (overdose) Suicide (X60-X64)': D2
+# 'Drug poisonings (overdose) Homicide (X85)': D3
+# 'Drug poisonings (overdose) Undetermined (Y10-Y14)': D4
+
