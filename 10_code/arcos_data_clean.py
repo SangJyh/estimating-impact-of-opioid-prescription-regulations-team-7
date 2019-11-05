@@ -2,14 +2,18 @@
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-os.chdir("C:\Duke")#set path to .gz file location
-df = pd.read_csv("arcos-in-statewide-itemized.tsv.gz", sep="\t")#read files
+lst = ['fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms'] #
+for i in lst:
+    os.chdir("C:\Duke")#set path to .gz file location
+    read_file = "arcos-{}-statewide-itemized.tsv.gz".format(i)
+    print("now process {} data".format(i))
+    df = pd.read_csv("arcos-{}-statewide-itemized.tsv.gz".format(i), sep="\t")#read files
 #df.shape
 #list(df.columns.values)
 #take a look at elemants and column names
 # since reporters are all distributer we can drop it
 ######drop columns that we think we don't need
-df1 = df.drop(columns = ['REPORTER_BUS_ACT','REPORTER_ADDRESS1', 'REPORTER_DEA_NO','REPORTER_NAME' ,'REPORTER_ADDL_CO_INFO' , 'REPORTER_ADDRESS1' , 'REPORTER_ADDRESS2' , 'REPORTER_CITY' ,'REPORTER_ZIP' , 'REPORTER_COUNTY' , 'BUYER_DEA_NO' , 'BUYER_ADDL_CO_INFO' , 'BUYER_ADDRESS1' , 'BUYER_ADDRESS2' , 'Product_Name' , 'Reporter_family' , 'MME_Conversion_Factor' , 'Combined_Labeler_Name' , 'Revised_Company_Name','Measure','ORDER_FORM_NO',"CORRECTION_NO",'CORRECTION_NO','ACTION_INDICATOR','ORDER_FORM_NO', 'CORRECTION_NO', 'STRENGTH', 'Combined_Labeler_Name','TRANSACTION_ID','Ingredient_Name', 'Measure', 'BUYER_NAME', 'BUYER_CITY','NDC_NO', 'Revised_Company_Name' , 'UNIT' , "DRUG_NAME" , "TRANSACTION_CODE","BUYER_ZIP"])
+    df1 = df.drop(columns = ['REPORTER_BUS_ACT','REPORTER_ADDRESS1', 'REPORTER_DEA_NO','REPORTER_NAME' ,'REPORTER_ADDL_CO_INFO' , 'REPORTER_ADDRESS1' , 'REPORTER_ADDRESS2' , 'REPORTER_CITY' ,'REPORTER_ZIP' , 'REPORTER_COUNTY' , 'BUYER_DEA_NO' , 'BUYER_ADDL_CO_INFO' , 'BUYER_ADDRESS1' , 'BUYER_ADDRESS2' , 'Product_Name' , 'Reporter_family'  , 'Combined_Labeler_Name' , 'Revised_Company_Name' , 'Measure' , 'ORDER_FORM_NO' , "CORRECTION_NO" , 'CORRECTION_NO' , 'ACTION_INDICATOR','ORDER_FORM_NO', 'CORRECTION_NO', 'STRENGTH', 'Combined_Labeler_Name','TRANSACTION_ID','Ingredient_Name', 'Measure', 'BUYER_NAME', 'BUYER_CITY','NDC_NO', 'Revised_Company_Name' , 'UNIT' , "DRUG_NAME" , "TRANSACTION_CODE","BUYER_ZIP"])##  this sounds important 'MME_Conversion_Factor'
 #list(df1.columns.values)#check columns again
 #df1.shape## check data frame size
 #df1.head()
@@ -17,21 +21,22 @@ df1 = df.drop(columns = ['REPORTER_BUS_ACT','REPORTER_ADDRESS1', 'REPORTER_DEA_N
 #df1 = df.dropna(axis='columns')# might not be a good idea
 #########
 
-df1["year"] = df1["TRANSACTION_DATE"]%10000 ##extract year
-df1["month"] = (df1["TRANSACTION_DATE"]//10000)//100 ## extract month
-df1["year/month"] = df1["year"]*100 + df1["month"]#combine year and month
-df1 = df1.drop(columns = ['TRANSACTION_DATE', 'year', 'month'])#drop original column
+    df1["year"] = df1["TRANSACTION_DATE"]%10000 ##extract year
+    df1["month"] = (df1["TRANSACTION_DATE"]//10000)//100 ## extract month
+    df1["year/month"] = df1["year"]*100 + df1["month"]#combine year and month
+    df1 = df1.drop(columns = ['TRANSACTION_DATE', 'year', 'month'])#drop original column
 #df1.head()
 ######group data together#######
 ###### still in progress ######
-df2 = df1.copy()#mak a copy
-df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE'])["QUANTITY"].transform(sum)#aggregation function and group data by county and month
-df2.head()
+    df2 = df1.copy()#mak a copy
+    df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month
+    #df2.head()
 #df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
-df2 = df2.drop(columns = 'QUANTITY')
-df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity'], keep='first').copy()
-os.chdir(dir_path)#change directory to repository path
-df2.to_csv("IN_cleaned_grouped.csv")
+    df2 = df2.drop(columns = 'QUANTITY')
+    df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity', "MME_Conversion_Factor"], keep='first').copy()
+    os.chdir(dir_path)#change directory to repository path
+    write = "{}_cleaned_grouped.csv".format(i.upper())
+    df2.to_csv(write)
 ######end of first clean stage##########
 
 
