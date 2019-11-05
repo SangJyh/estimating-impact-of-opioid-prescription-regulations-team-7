@@ -3,7 +3,7 @@ import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
 os.chdir("C:\Duke")#set path to .gz file location
-df = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", sep="\t")#read files
+df = pd.read_csv("arcos-tx-statewide-itemized.tsv.gz", sep="\t")#read files
 #df.shape
 #list(df.columns.values)
 #take a look at elemants and column names
@@ -31,7 +31,7 @@ df2.head()
 df2 = df2.drop(columns = 'QUANTITY')
 df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity'], keep='first').copy()
 os.chdir(dir_path)#change directory to repository path
-df2.to_csv("FL_cleaned_grouped.csv")
+df2.to_csv("TX_cleaned_grouped.csv")
 ######end of first clean stage##########
 
 
@@ -103,9 +103,9 @@ from arcos_data_clean import clean
 
 class clean(object):
 """
-    """
-    This is class that will help you clean arcos data
-    """
+#    """
+#    This is class that will help you clean arcos data
+#    """
 """
     #self will be a data frame
     import pandas as pd
