@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-lst = ['fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms'] 
+lst = ['ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] 
 #create read list  ##backup 'fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn',
 for i in lst:
     os.chdir("C:\Duke")#set path to .gz file location
@@ -29,7 +29,7 @@ for i in lst:
 #df1.head()
 ######group data together#######
 ###### still in progress ######
-#    df2 = df1.copy()#mak a copy
+    df2 = df1.copy()#mak a copy
     df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
     #df2.head()
 #df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
