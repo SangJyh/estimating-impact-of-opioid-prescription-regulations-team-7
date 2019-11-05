@@ -3,7 +3,7 @@ import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
 os.chdir("C:\Duke")#set path to .gz file location
-df = pd.read_csv("arcos-ca-statewide-itemized.tsv.gz", sep="\t")#read files
+df = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", sep="\t")#read files
 #df.shape
 #list(df.columns.values)
 #take a look at elemants and column names
@@ -31,14 +31,14 @@ df2.head()
 df2 = df2.drop(columns = 'QUANTITY')
 df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity'], keep='first').copy()
 os.chdir(dir_path)#change directory to repository path
-df2.to_csv("CA_cleaned_grouped.csv")
+df2.to_csv("FL_cleaned_grouped.csv")
 ######end of first clean stage##########
 
 
 
 
 
-
+"""
 #df2['dos_total'] = df2.apply(lambda x : (df2['CALC_BASE_WT_IN_GM'] * df2['DOSAGE_UNIT'] * df2['dos_str']))#dos total = calc wt in gm *unit * strength
 #df2 = df2.drop(columns = ['CALC_BASE_WT_IN_GM','DOSAGE_UNIT','dos_str'])
 #df3 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity','dos_total'], keep='first').copy()
@@ -102,9 +102,11 @@ from arcos_data_clean import clean
 
 
 class clean(object):
+"""
     """
     This is class that will help you clean arcos data
     """
+"""
     #self will be a data frame
     import pandas as pd
     def read(self):
@@ -148,7 +150,7 @@ class clean(object):
             return ( r**2*acos((d**2 + r**2 - R**2)/(2*d*r)) + R**2*acos((d**2 + R**2 - r**2)/(2*d*R)) - 0.5*sqrt((R+r-d)*(d+r-R)*(d-r+R)*(d+r+R)) )#itr_csv = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", iterator=True, chunksize=500000, low_memory = False, encoding = 'utf-8',error_bad_lines=False) 
 #df = pd.concat([chunk for chunk in itr_csv]) ##failed to load in chunk.... don't know why
 #to_parquet(df, FL_drug, engine='auto', compression='snappy', index=None, partition_cols=None, **kwargs)### doesn't work....
-
+"""
 """
 from datetime import datetime
 date = datetime.striptime(str(df1['ACTION_INDICATOR']),'%m%d%Y')####process with string data
