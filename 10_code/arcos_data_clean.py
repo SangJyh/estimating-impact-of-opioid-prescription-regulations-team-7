@@ -32,6 +32,13 @@ df2 = df2.drop(columns = 'QUANTITY')
 df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity'], keep='first').copy()
 os.chdir(dir_path)#change directory to repository path
 df2.to_csv("CA_cleaned_grouped.csv")
+######end of first clean stage##########
+
+
+
+
+
+
 #df2['dos_total'] = df2.apply(lambda x : (df2['CALC_BASE_WT_IN_GM'] * df2['DOSAGE_UNIT'] * df2['dos_str']))#dos total = calc wt in gm *unit * strength
 #df2 = df2.drop(columns = ['CALC_BASE_WT_IN_GM','DOSAGE_UNIT','dos_str'])
 #df3 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity','dos_total'], keep='first').copy()
