@@ -1,59 +1,68 @@
-from arcos_data_clean import clean
+#from arcos_data_clean import clean
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-os.chdir("C:\Duke")#set path to .gz file location
-df = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", sep="\t")#read files
-#itr_csv = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", iterator=True, chunksize=500000, low_memory = False, encoding = 'utf-8',error_bad_lines=False) 
-#df = pd.concat([chunk for chunk in itr_csv]) ##failed to load in chunk.... don't know why
-#to_parquet(df, FL_drug, engine='auto', compression='snappy', index=None, partition_cols=None, **kwargs)### doesn't work....
-df.shape
-list(df.columns.values)
+lst = ['ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] 
+#create read list  ##backup 'fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn',
+for i in lst:
+    os.chdir("C:\Duke")#set path to .gz file location
+    read_file = "arcos-{}-statewide-itemized.tsv.gz".format(i)#read file name
+    print("now process {} data".format(i))
+    df = pd.read_csv(read_file, sep="\t")#read files
+#df.shape
+#list(df.columns.values)
 #take a look at elemants and column names
 # since reporters are all distributer we can drop it
 ######drop columns that we think we don't need
-df1 = df.drop(columns = ['REPORTER_BUS_ACT','REPORTER_ADDRESS1', 'REPORTER_DEA_NO','REPORTER_NAME' ,'REPORTER_ADDL_CO_INFO' , 'REPORTER_ADDRESS1' , 'REPORTER_ADDRESS2' , 'REPORTER_CITY' ,'REPORTER_ZIP' , 'REPORTER_COUNTY' , 'BUYER_DEA_NO' , 'BUYER_ADDL_CO_INFO' , 'BUYER_ADDRESS1' , 'BUYER_ADDRESS2' , 'Product_Name' , 'Reporter_family' , 'MME_Conversion_Factor' , 'Combined_Labeler_Name' , 'Revised_Company_Name','Measure','ORDER_FORM_NO',"CORRECTION_NO",'CORRECTION_NO','ACTION_INDICATOR','ORDER_FORM_NO', 'CORRECTION_NO', 'STRENGTH', 'Combined_Labeler_Name','TRANSACTION_ID','Ingredient_Name', 'Measure', 'BUYER_NAME', 'BUYER_CITY','NDC_NO', 'Revised_Company_Name' , 'UNIT' , "DRUG_NAME" , "TRANSACTION_CODE","BUYER_ZIP"])
-list(df1.columns.values)#check columns again
-df1.shape## check data frame size
-df1.head()
-"""
-from datetime import datetime
-date = datetime.striptime(str(df1['ACTION_INDICATOR']),'%m%d%Y')####process with string data
-date.strftime()####we can use datetime to process date data
-"""
+    df1 = df.drop(columns = ['REPORTER_BUS_ACT','REPORTER_ADDRESS1', 'REPORTER_DEA_NO','REPORTER_NAME' ,'REPORTER_ADDL_CO_INFO' , 'REPORTER_ADDRESS1' , 'REPORTER_ADDRESS2' , 'REPORTER_CITY' ,'REPORTER_ZIP' , 'REPORTER_COUNTY' , 'BUYER_DEA_NO' , 'BUYER_ADDL_CO_INFO' , 'BUYER_ADDRESS1' , 'BUYER_ADDRESS2' , 'Product_Name' , 'Reporter_family'  , 'Combined_Labeler_Name' , 'Revised_Company_Name' , 'Measure' , 'ORDER_FORM_NO' , "CORRECTION_NO" , 'CORRECTION_NO' , 'ACTION_INDICATOR','ORDER_FORM_NO', 'CORRECTION_NO', 'STRENGTH', 'Combined_Labeler_Name','TRANSACTION_ID','Ingredient_Name', 'Measure', 'BUYER_NAME', 'BUYER_CITY','NDC_NO', 'Revised_Company_Name' , 'UNIT' , "DRUG_NAME" , "TRANSACTION_CODE","BUYER_ZIP"])##  this sounds important 'MME_Conversion_Factor'
+#list(df1.columns.values)#check columns again
+#df1.shape## check data frame size
+#df1.head()
 ######or, we can just drop any columns that contains na value
 #df1 = df.dropna(axis='columns')# might not be a good idea
 #########
 
-df1["year"] = df1["TRANSACTION_DATE"]%10000 ##extract year
-df1["month"] = (df1["TRANSACTION_DATE"]//10000)//100 ## extract month
-df1["year/month"] = df1["year"]*100 + df1["month"]#combine year and month
-df1 = df1.drop(columns = ['TRANSACTION_DATE','day', 'year', 'month'])#drop original column
-df1.head()
-
-
+    df1["year"] = df1["TRANSACTION_DATE"]%10000 ##extract year
+    df1["month"] = (df1["TRANSACTION_DATE"]//10000)//100 ## extract month
+    df1["year/month"] = df1["year"]*100 + df1["month"]#combine year and month
+    df1 = df1.drop(columns = ['TRANSACTION_DATE', 'year', 'month'])#drop original column
+#df1.head()
 ######group data together#######
 ###### still in progress ######
-df2 = df1.copy()#mak a copy
-df2.head()
-df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE'])["QUANTITY", ""].transform(sum)#aggregation function and group data by county and month
-df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE","MME_Conversion_Factor"], as_index = False).sum()
-df2 = df2.drop(columns = 'QUANTITY')
-df2['dos_total'] = df2.apply(lambda x : (df2['CALC_BASE_WT_IN_GM'] * df2['DOSAGE_UNIT'] * df2['dos_str']))#dos total = calc wt in gm *unit * strength
-df2 = df2.drop(columns = ['CALC_BASE_WT_IN_GM','DOSAGE_UNIT','dos_str'])
-df3 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity','dos_total'], keep='first').copy()
-df3.shape
+    df2 = df1.copy()#mak a copy
+    df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
+    #df2.head()
+#df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
+    df2 = df2.drop(columns = 'QUANTITY')
+    df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity', "MME_Conversion_Factor"], keep='first').copy()
+    os.chdir(dir_path)#change directory to repository path
+    write = "{}_cleaned_grouped.csv".format(i.upper())
+    df2.to_csv(write)
+######end of first clean stage##########
+
+
+
+
+
+"""
+#df2['dos_total'] = df2.apply(lambda x : (df2['CALC_BASE_WT_IN_GM'] * df2['DOSAGE_UNIT'] * df2['dos_str']))#dos total = calc wt in gm *unit * strength
+#df2 = df2.drop(columns = ['CALC_BASE_WT_IN_GM','DOSAGE_UNIT','dos_str'])
+#df3 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity','dos_total'], keep='first').copy()
+#df3.shape
 os.chdir(dir_path)#change directory to repository path
-df3.to_csv("FL_cleaned_grouped.csv")#save cleaned data to project folder
+#df3.to_csv("CA_cleaned_grouped.csv")#save cleaned data to project folder
 
 
 
-
-
-
-
-
-
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
+#===============================================================================
 #===============================================================================
 #######we don't need them... maybe, leave them in case we still need them####
 ############################################################################
@@ -99,9 +108,11 @@ from arcos_data_clean import clean
 
 
 class clean(object):
-    """
-    This is class that will help you clean arcos data
-    """
+"""
+#    """
+#    This is class that will help you clean arcos data
+#    """
+"""
     #self will be a data frame
     import pandas as pd
     def read(self):
@@ -142,4 +153,12 @@ class clean(object):
             return 0
 
         else:
-            return ( r**2*acos((d**2 + r**2 - R**2)/(2*d*r)) + R**2*acos((d**2 + R**2 - r**2)/(2*d*R)) - 0.5*sqrt((R+r-d)*(d+r-R)*(d-r+R)*(d+r+R)) )
+            return ( r**2*acos((d**2 + r**2 - R**2)/(2*d*r)) + R**2*acos((d**2 + R**2 - r**2)/(2*d*R)) - 0.5*sqrt((R+r-d)*(d+r-R)*(d-r+R)*(d+r+R)) )#itr_csv = pd.read_csv("arcos-fl-statewide-itemized.tsv.gz", iterator=True, chunksize=500000, low_memory = False, encoding = 'utf-8',error_bad_lines=False) 
+#df = pd.concat([chunk for chunk in itr_csv]) ##failed to load in chunk.... don't know why
+#to_parquet(df, FL_drug, engine='auto', compression='snappy', index=None, partition_cols=None, **kwargs)### doesn't work....
+"""
+"""
+from datetime import datetime
+date = datetime.striptime(str(df1['ACTION_INDICATOR']),'%m%d%Y')####process with string data
+date.strftime()####we can use datetime to process date data
+"""
