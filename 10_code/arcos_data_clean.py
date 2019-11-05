@@ -30,7 +30,7 @@ for i in lst:
 ######group data together#######
 ###### still in progress ######
 #    df2 = df1.copy()#mak a copy
-    df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month
+    df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year/month', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)#aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
     #df2.head()
 #df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
     df2 = df2.drop(columns = 'QUANTITY')
