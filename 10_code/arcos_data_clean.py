@@ -37,7 +37,7 @@ for i in lst:
     df2 = df2.drop_duplicates(subset = ['BUYER_COUNTY', 'year/month', 'DRUG_CODE','quantity', "MME_Conversion_Factor"], keep='first').copy()
     os.chdir(dir_path)#change directory to repository path
     write = "{}_cleaned_grouped.csv".format(i.upper())
-    df2.to_csv(write)
+    df2.to_csv(write, index =False)
 ######end of first clean stage##########
 
 
