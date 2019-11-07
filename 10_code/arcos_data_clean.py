@@ -2,11 +2,14 @@
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-lst = ['al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] 
-#excerpt Alaska and Washington D.c.
+lst = ['ar','az','ca','co', 'ct','de', 'fl','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] #  'fl','tx','wa','az'
+#lst = ['al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] 
+#except Alaska and Washington D.c.
 #create read list  ##backup 'fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn',
+
 for i in lst:
-    read_file = "/Users/josephlee/Downloads/arcos-{}-statewide-itemized.tsv.gz".format(i)#read file name
+    os.chdir('C:/Duke')
+    read_file = "arcos-{}-statewide-itemized.tsv.gz".format(i)#read file name
     print("now process {} data".format(i))
     df = pd.read_csv(read_file, sep="\t")#read files
 #df.shape
@@ -30,16 +33,24 @@ for i in lst:
 ######group data together#######
 ###### still in progress ######
     df2 = df1.copy() #mak a copy
-    df2['quantity'] = df1.groupby(['BUYER_COUNTY', 'year', 'DRUG_CODE', "MME_Conversion_Factor"])["QUANTITY"].transform(sum)
-#aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
-#df2.head()
-#df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
-    df2 = df2.drop('QUANTITY',axis=1) 
-    df2['MME'] = df2['CALC_BASE_WT_IN_GM'] * df2['MME_Conversion_Factor']
-    df2 = df2.drop_duplicates(subset = ['BUYER_STATE','year', 'DRUG_CODE','quantity', 'MME'], keep='first').copy()
-    write = "/Users/josephlee/Downloads/{}_cleaned_grouped.csv".format(i.upper())
+    df1['MME'] = df1['CALC_BASE_WT_IN_GM'] * df1['MME_Conversion_Factor']
+    df2['quantity'] = df1.groupby(['BUYER_STATE','BUYER_COUNTY', 'year'])["QUANTITY"].transform(sum)
+    df2["mme"] = df1.groupby(['BUYER_STATE','BUYER_COUNTY','year'])["MME"].transform(sum)
+    df2 = df2.drop(columns = ["BUYER_BUS_ACT","CALC_BASE_WT_IN_GM","MME_Conversion_Factor","dos_str","DRUG_CODE", 'QUANTITY', 'DOSAGE_UNIT' ])
+    #aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
+    #df2.head()
+    #df2 = df1.groupby([ 'BUYER_COUNTY', 'year/month', 'DRUG_CODE',"BUYER_STATE"], as_index = False).sum()
+    #    df2 = df2.drop('QUANTITY',axis=1) 
+    #    df2['MME'] = df2['CALC_BASE_WT_IN_GM'] * df2['MME_Conversion_Factor']
+    df2 = df2.drop_duplicates(subset = ['BUYER_STATE','BUYER_COUNTY','year'], keep='first').copy()
+    df2 = df2.sort_values(by =['year'])
+    os.chdir(dir_path)
+    write = "{}_cleaned_grouped.csv".format(i.upper())
+    df2.to_csv(write, index =False)
+    write = "{}_cleaned_grouped.csv".format(i.upper())
     df2.to_csv(write, index =False)
 ######end of first clean stage##########
+
 
 
 
