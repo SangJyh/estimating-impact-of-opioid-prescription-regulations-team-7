@@ -34,7 +34,7 @@ for i in lst:
 ###### still in progress ######
     df2 = df1.copy() #mak a copy
     df1['MME'] = df1['CALC_BASE_WT_IN_GM'] * df1['MME_Conversion_Factor']
-    df2['quantity'] = df1.groupby(['BUYER_STATE','BUYER_COUNTY', 'year'])["QUANTITY"].transform(sum)
+    #df2['quantity'] = df1.groupby(['BUYER_STATE','BUYER_COUNTY', 'year'])["QUANTITY"].transform(sum)
     df2["mme"] = df1.groupby(['BUYER_STATE','BUYER_COUNTY','year'])["MME"].transform(sum)
     df2 = df2.drop(columns = ["BUYER_BUS_ACT","CALC_BASE_WT_IN_GM","MME_Conversion_Factor","dos_str","DRUG_CODE", 'QUANTITY', 'DOSAGE_UNIT' ])
     #aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need
