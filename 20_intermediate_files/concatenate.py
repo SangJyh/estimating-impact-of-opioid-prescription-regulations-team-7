@@ -9,7 +9,7 @@ os.chdir("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-
 # concatenate 51 files and export : "output.csv"
 interesting_files = glob.glob("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-team-7/10_code/Concatenate/*grouped.csv") 
 df = pd.concat((pd.read_csv(f, header = 0,index_col=False) for f in interesting_files), )
-df.to_csv("output.csv",index = )
+df.to_csv("output.csv",index = False)
 
 
 #
