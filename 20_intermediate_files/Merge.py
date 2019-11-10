@@ -5,7 +5,10 @@ import numpy as np
 os.getcwd()
 
 d1=pd.read_csv("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-team-7/10_code/Concatenate/output.csv")
+#d1=pd.read_csv("C:/Duke/2019_fall/690_python/estimating-impact-of-opioid-prescription-regulations-team-7/10_code/Concatenate/output.csv")
+
 d2=pd.read_csv("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-team-7/00_source/population/pop_counties_20062012.csv")
+#d2=pd.read_csv("C:/Duke/2019_fall/690_python/estimating-impact-of-opioid-prescription-regulations-team-7/00_source/population/pop_counties_20062012.csv")
 
 merge=pd.merge(d1, d2, on=['BUYER_STATE','BUYER_COUNTY','year'], how='inner')
 merge.head()
