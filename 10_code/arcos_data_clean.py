@@ -2,8 +2,8 @@
 import pandas as pd
 import os
 dir_path = os.path.dirname(os.path.realpath('arcos_data_clean.py'))#set .py file path for future use
-lst = ['ak','al']
-#['ar','az','ca','co', 'ct','de', 'fl','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] #  'fl','tx','wa','az'
+lst = ['tx','wa']
+#['ak','al','ar','az','ca','co', 'ct','de', 'fl','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] #  'fl','tx','wa','az'
 #lst = ['al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn','mo','ms','mt','ne','nv', 'nh', 'nj','nm','ny','nc', 'nd', 'oh', 'ok', 'or', 'pa', 'pr', 'ri' , 'sc','sd','tn','ut','vt', 'va', 'wv', 'wi', 'wy'] 
 #except Alaska and Washington D.c.
 #create read list  ##backup 'fl','wa','tx','ak','al','az','ca','co', 'ct','ga','hi', 'ia', 'id', 'il', 'in', 'ks', 'ky', 'la', 'ma', 'md','me','mi','mn',
@@ -35,7 +35,7 @@ for i in lst:
 ###### still in progress ######
     df2 = df1.copy() #mak a copy
     df1['MME'] = df1['CALC_BASE_WT_IN_GM'] * df1['MME_Conversion_Factor']
-    #df2['quantity'] = df1.groupby(['BUYER_STATE','BUYER_COUNTY', 'year'])["QUANTITY"].transform(sum)
+    df2['quantity'] = df1.groupby(['BUYER_STATE','BUYER_COUNTY', 'year'])["QUANTITY"].transform(sum)
     df2["mme"] = df1.groupby(['BUYER_STATE','BUYER_COUNTY','year'])["MME"].transform(sum)
     df2 = df2.drop(columns = ["BUYER_BUS_ACT","CALC_BASE_WT_IN_GM","MME_Conversion_Factor","dos_str","DRUG_CODE", 'QUANTITY', 'DOSAGE_UNIT' ])
     #aggregation function and group data by county and month    ###I keep df1 unchanged for possible future need

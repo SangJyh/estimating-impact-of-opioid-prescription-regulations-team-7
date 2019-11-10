@@ -23,3 +23,5 @@ full_merge.sort_values(['State', 'Year'], inplace = True)
 full_merge.reset_index(inplace = True, drop = True)
 
 full_merge.to_csv('full_merge.csv', index = False)
+
+
