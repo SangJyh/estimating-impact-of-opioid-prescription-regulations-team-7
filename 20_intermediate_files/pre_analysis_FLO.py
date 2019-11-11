@@ -25,12 +25,15 @@ compared_state = ['PA','FL','OH','CA','MI','TN','NY']
 flo_compare =all_0710[all_0710['State'].isin(compared_state)]
 #PA and TN seems have similar MME trengs with FL within 2006-2009
 
-(ggplot(flo_compare, aes(x ='Year', y='death_rate',color = 'State')) +
+p1 = (ggplot(flo_compare, aes(x ='Year', y='death_rate',color = 'State')) +
         geom_line(alpha=1)
         #geom_smooth(method='lm',color= 'r')
 )
 
-(ggplot(flo_compare, aes(x ='Year', y='mme_rate',color = 'State')) +
+p2 = (ggplot(flo_compare, aes(x ='Year', y='mme_rate',color = 'State')) +
         geom_line(alpha=1)
         #geom_smooth(method='lm',color= 'r')
 )
+
+p1.save('comparision_for_flo_death_rate')
+p2.save('comparision_for_flo_mme_rate')

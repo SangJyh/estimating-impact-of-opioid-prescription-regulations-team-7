@@ -20,9 +20,10 @@ all_wa
 compared_state = ['CO','NC','AZ','GA','NV','MA','WA']
 wa_compare =all_0811[all_0811['State'].isin(compared_state)]
 
-(ggplot(wa_compare, aes(x ='Year', y='Deaths',color = 'State')) +
+p = (ggplot(wa_compare, aes(x ='Year', y='Deaths',color = 'State')) +
         geom_line(alpha=1)
         #geom_smooth(method='lm',color= 'r')
-)
+   )
 
+p.save('comparision_for_wa')
 #The seletion of comparision can tell from the plots
