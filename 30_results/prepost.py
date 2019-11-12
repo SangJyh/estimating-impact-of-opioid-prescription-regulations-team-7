@@ -23,9 +23,9 @@ wa = df[df['State'] == 'WA']
 
 # FLORIDA
 # diff in diff
-(ggplot(fl_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + xlim(2006, 2015) + geom_vline(xintercept = 2010))
+(ggplot(fl_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + xlim(2003, 2015) + geom_vline(xintercept = 2010))
 # prepost
-(ggplot(fl, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + xlim(2006, 2015) + geom_vline(xintercept = 2010))
+(ggplot(fl, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + xlim(2003, 2015) + geom_vline(xintercept = 2010))
 
 # TEXAS
 # diff in diff
