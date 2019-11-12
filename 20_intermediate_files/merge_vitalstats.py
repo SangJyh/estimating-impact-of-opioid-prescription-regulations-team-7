@@ -22,6 +22,9 @@ full_merge = pd.merge(original, vitalstats, how = 'outer', on = ['State', 'Year'
 full_merge.sort_values(['State', 'Year'], inplace = True)
 full_merge.reset_index(inplace = True, drop = True)
 
+full_merge['deaths_percap'] = full_merge['Deaths']/full_merge['population']
+full_merge['mme_percap'] = full_merge['mme']/full_merge['population']
+
 full_merge.to_csv('full_merge.csv', index = False)
 
 
