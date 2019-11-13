@@ -29,7 +29,7 @@ wa = df[df['State'] == 'WA']
 death_yrs = (2003,2015)
 death_scale = np.arange(2003, 2016, 1)
 
-ship_yrs = (2006, 2013)
+ship_yrs = (2006, 2012)
 ship_scale = np.arange(2006, 2013, 1)
 
 # FLORIDA 
@@ -39,10 +39,10 @@ fl_policy = 2010
 # FLORIDA DEATHS
 
 # diff in diff (death)
-(ggplot(fl_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + geom_vline(xintercept = fl_policy) + labs(title = 'Florida: Diff-in-Diff Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita') + scale_x_continuous(breaks = death_scale, limits= death_yrs) )
+(ggplot(fl_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + geom_vline(xintercept = fl_policy) + labs(title = 'Florida: Diff-in-Diff Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita') + scale_x_continuous(breaks = death_scale, limits= death_yrs) )
 
 # prepost (death)
-(ggplot(fl, aes(x ='Year', y='deaths_percap', color = 'State')) + geom_line(alpha=1) + labs(title = 'Florida: Pre-Post Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita') + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = fl_policy))
+(ggplot(fl, aes(x ='Year', y='deaths_percap', color = 'State')) + geom_line(alpha=1) + labs(title = 'Florida: Pre-Post Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita') + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = fl_policy))
 
 # FLORIDA SHIPMENTS
 
@@ -58,17 +58,17 @@ fl_policy = 2010
 tx_policy = 2007
 
 # diff in diff
-(ggplot(tx_death, aes(x ='Year', y='deaths_percap', color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = tx_policy) + labs(title = 'Texas: Diff-in-Diff Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita'))
+(ggplot(tx_death, aes(x ='Year', y='deaths_percap', color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = tx_policy) + labs(title = 'Texas: Diff-in-Diff Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita'))
 
 # prepost
-(ggplot(tx, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = tx_policy) + labs(title = 'Texas: Pre-Post Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita'))
+(ggplot(tx, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = tx_policy) + labs(title = 'Texas: Pre-Post Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita'))
 
 # WASHINGTON
 
 wa_policy = 2012
 
 # diff in diff
-(ggplot(wa_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = wa_policy) + labs(title = 'Washington: Diff-in-Diff Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita'))
+(ggplot(wa_death, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = wa_policy) + labs(title = 'Washington: Diff-in-Diff Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita'))
 
 # prepost
-(ggplot(wa, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = wa_policy) + labs(title = 'Washington: Pre-Post Plot of Opioid Deaths') + ylab('Overdose Deaths per Capita'))
+(ggplot(wa, aes(x ='Year', y='deaths_percap',color = 'State')) + geom_line(alpha=1) + scale_x_continuous(breaks = death_scale, limits = death_yrs) + geom_vline(xintercept = wa_policy) + labs(title = 'Washington: Pre-Post Plot of Overdose Deaths') + ylab('Overdose Deaths per Capita'))
