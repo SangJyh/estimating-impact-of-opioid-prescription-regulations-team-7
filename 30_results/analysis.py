@@ -10,7 +10,7 @@ df.head()
 def grouped_data(df, state, comp_list):
     sub = df[df['State'].isin(comp_list)]
     sub['policy'] = np.where(sub['State'] == state, 'Policy', 'Non-policy')
-    grouped_df = fl_death.groupby(['policy','Year']).mean()
+    grouped_df = sub.groupby(['policy','Year']).mean()
     grouped_df = grouped_df.reset_index()
     return grouped_df
 
@@ -29,11 +29,13 @@ fl = df[df['State'] == 'FL']
 tx_policy = 2007
 tx_death_comp = ['TX', 'PA', 'OH', 'IL', 'CA']
 tx_death_grouped = grouped_data(df, 'TX', tx_death_comp)
+tx = df[df['State'] == 'TX']
 
 # washington
 wa_policy = 2012
 wa_death_comp = ['WA', 'NC', 'MA', 'CO']
 wa_death_grouped = grouped_data(df, 'WA', wa_death_comp)
+wa = df[df['State'] == 'WA']
 
 # scales
 death_yrs = (2003,2015)
@@ -55,7 +57,7 @@ def did_plot_deaths(df, state, policy_year, state_title):
          + geom_smooth(data = state[state['Year'] >= policy_year], color='turquoise', method='lm')
          + geom_smooth(data = df[(df['Year'] <= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
-               color = 'red', method = 'lm')
+               color = 'red', method = 'lm', se = True)
          + geom_smooth(data = df[(df['Year'] >= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
                color = 'red', method = 'lm'))
