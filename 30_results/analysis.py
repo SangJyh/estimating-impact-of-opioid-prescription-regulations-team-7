@@ -57,7 +57,9 @@ def did_plot_deaths(df, state, policy_year, state_title):
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Diff-in-Diff Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
+            + ylim(0.00,0.00025)
          + scale_x_continuous(breaks = death_scale, limits= death_yrs) 
+         #+ scale_y_continuous(breaks = death_scale, limits= death_yrs) 
          + geom_smooth(data = state[state['Year'] <= policy_year], color='turquoise', method='lm') 
          + geom_smooth(data = state[state['Year'] >= policy_year], color='turquoise', method='lm')
          + geom_smooth(data = df[(df['Year'] <= policy_year) &
@@ -90,7 +92,7 @@ def prepost_plot_deaths(state, policy_year, state_title):
     print (ggplot(state, aes(x ='Year', y='deaths_percap',color = 'FIPS')) 
          + geom_point(alpha=.2) 
          + scale_x_continuous(breaks = death_scale, limits = death_yrs) 
-         + geom_vline(xintercept = policy_year) 
+    + ylim(0.00,0.00025)         + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Pre-Post Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
          + geom_smooth(data = state[state['Year'] <= policy_year], color='red', method='lm') 
