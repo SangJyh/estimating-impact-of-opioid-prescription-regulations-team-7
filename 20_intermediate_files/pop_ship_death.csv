@@ -1,4 +1,4 @@
-county,state,mme,year,FIPS,population,Deaths,deaths_percap,mme_percap
+County,State,mme,Year,FIPS,population,Deaths,deaths_percap,mme_percap
 abbeville,SC,,2003,45001,26371.0,,,
 abbeville,SC,,2004,45001,26304.0,,,
 abbeville,SC,,2005,45001,25676.0,,,

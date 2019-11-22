@@ -34,6 +34,8 @@ pop_ship_death['deaths_percap'] = pop_ship_death['Deaths']/pop_ship_death['popul
 
 pop_ship_death['mme_percap'] = pop_ship_death['mme']/pop_ship_death['population']
 
+pop_ship_death.rename(columns={'county':'County', 'state':'State', 'year':'Year'}, inplace = True)
+
 pop_ship_death.to_csv('pop_ship_death.csv', index = False)
 
 
