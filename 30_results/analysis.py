@@ -2,15 +2,18 @@ import pandas as pd
 import numpy as np
 from plotnine import *
 
-df = pd.read_csv('../20_intermediate_files/full_merge.csv')
-df.head()
+full_df = pd.read_csv('../20_intermediate_files/pop_ship_death.csv')
+full_df.head()
+
+df = full_df[['State', 'Year', 'FIPS', 'deaths_percap', 'mme_percap']]
+df_county = full_df[['State', 'Year', 'deaths_percap', 'mme_percap', 'FIPS']]
 
 # function to get grouped datasets
 
 def grouped_data(df, state, comp_list):
     sub = df[df['State'].isin(comp_list)]
     sub['policy'] = np.where(sub['State'] == state, 'Policy', 'Non-policy')
-    grouped_df = sub.groupby(['policy','Year']).mean()
+    grouped_df = sub.groupby(['policy','Year','FIPS']).mean()
     grouped_df = grouped_df.reset_index()
     return grouped_df
 
@@ -23,7 +26,9 @@ fl_mme_comp = ['FL', 'GA', 'CA', 'NM']
 fl_death_grouped = grouped_data(df, 'FL', fl_death_comp)
 fl_mme_grouped = grouped_data(df, 'FL', fl_mme_comp)
 
-fl = df[df['State'] == 'FL']
+fl = df_county[df_county['State'] == 'FL']
+fl_new = fl[fl['FIPS'] != 12039]
+fl_new = fl_new[fl_new['FIPS'] != 12075]
 
 # texas
 tx_policy = 2007
@@ -48,7 +53,7 @@ ship_scale = np.arange(2006, 2013, 1)
 
 def did_plot_deaths(df, state, policy_year, state_title):
     print (ggplot(df, aes(x ='Year', y='deaths_percap',color = 'policy')) 
-         + geom_line(alpha=1) 
+         + geom_point(alpha=.2) 
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Diff-in-Diff Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
@@ -65,7 +70,7 @@ def did_plot_deaths(df, state, policy_year, state_title):
 
 def did_plot_mme(df, state, policy_year, state_title):
     print (ggplot(df, aes(x ='Year', y='mme_percap',color = 'policy')) 
-         + geom_line(alpha=1) 
+         + geom_point(alpha=.2) 
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Diff-in-Diff Plot of Opioid Shipments'.format(state_title))
          + ylab('Opioid Shipments per Capita')
@@ -76,25 +81,26 @@ def did_plot_mme(df, state, policy_year, state_title):
                        color='turquoise', method='lm')
          + geom_smooth(data = df[(df['Year'] <= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
-               color = 'red', method = 'lm')
+               color = 'red', method = 'lm', se = True)
          + geom_smooth(data = df[(df['Year'] >= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
-               color = 'red', method = 'lm'))
+               color = 'red', method = 'lm', se = True))
 
 def prepost_plot_deaths(state, policy_year, state_title):
-    print (ggplot(state, aes(x ='Year', y='deaths_percap',color = 'State')) 
-         + geom_line(alpha=1, show_legend = False) 
+    print (ggplot(state, aes(x ='Year', y='deaths_percap',color = 'FIPS')) 
+         + geom_point(alpha=.2) 
          + scale_x_continuous(breaks = death_scale, limits = death_yrs) 
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Pre-Post Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
          + geom_smooth(data = state[state['Year'] <= policy_year], color='red', method='lm') 
          + geom_smooth(data = state[state['Year'] >= policy_year], color='red', method='lm'))
+#          + geom_text(aes(label='FIPS')))
     pass
 
 def prepost_plot_mme(state, policy_year, state_title):
     print (ggplot(state, aes(x ='Year', y='mme_percap',color = 'State')) 
-         + geom_line(alpha=1, show_legend = False) 
+         + geom_point(alpha=.2, show_legend = False) 
          + scale_x_continuous(breaks = ship_scale, limits = ship_yrs) 
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Pre-Post Plot of Opioid Shipments'.format(state_title))
@@ -106,8 +112,11 @@ def prepost_plot_mme(state, policy_year, state_title):
 # Florida
 did_plot_deaths(fl_death_grouped, fl, fl_policy, 'Florida')
 did_plot_mme(fl_mme_grouped, fl, fl_policy, 'Florida')
+prepost_plot_deaths(fl_new, fl_policy, 'Florida')
 prepost_plot_deaths(fl, fl_policy, 'Florida')
 prepost_plot_mme(fl, fl_policy, 'Florida')
+# need to fix florida deaths
+# outliers: 12039, 12075
 
 # Texas
 did_plot_deaths(tx_death_grouped, tx, tx_policy, 'Texas')
