@@ -72,6 +72,9 @@ print(vs_collapsed.dtypes)
 vs_county_state_year = vs_collapsed.groupby(['County', 'State', 'Year']).sum()
 vs_county_state_year.reset_index(inplace=True)
 vs_county_state_year['FIPS'] = vs_county_state_year['FIPS'].astype(int)
+
+vs_county_state_year.sort_values(['County', 'State', 'Year'], inplace = True)
+
 vs_county_state_year.head()
 
 vs_county_state_year.to_csv('vs_county_state_year.csv')
