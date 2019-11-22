@@ -2,19 +2,23 @@ import os
 import pandas as pd
 import numpy as np
 
-os.getcwd()
+# arcos shipments
+shipments = pd.read_csv("../10_code/Concatenate/output.csv")
+shipments.rename(columns={'BUYER_COUNTY':'county', 'BUYER_STATE':'state'}, inplace = True)
+shipments['county'] = shipments['county'].str.lower()
+shipments.head()
 
-#d1=pd.read_csv("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-team-7/10_code/Concatenate/output.csv")
-d1=pd.read_csv("C:/Duke/2019_fall/690_python/estimating-impact-of-opioid-prescription-regulations-team-7/10_code/Concatenate/output.csv")
-d1.head()
-#d2=pd.read_csv("/Users/josephlee/estimating-impact-of-opioid-prescription-regulations-team-7/00_source/population/pop_counties_20062012.csv")
-d2=pd.read_csv("C:/Duke/2019_fall/690_python/estimating-impact-of-opioid-prescription-regulations-team-7/00_source/population/population_03-15.csv")
-d2.head()
-d2['BUYER_COUNTY']= d2['BUYER_COUNTY'].str.upper()
-merge=pd.merge(d1, d2, on=['BUYER_STATE','BUYER_COUNTY','year'], how='outer')
-merge.sample(5)
-#dr= ['countyfips','STATE','COUNTY','county_name','NAME','variable']
-merge1=merge[['BUYER_COUNTY','BUYER_STATE','mme','year','population']].copy()
-merge1.sort_values(['year'])
+# populations
+pop = pd.read_csv("../00_source/population/population_03-15.csv")
+pop['county'] = pop['county'].str.lower()
+pop.head()
 
-merge1.to_csv("merged.csv",index = False)
+pop_ship = pd.merge(shipments, pop, on=['county','state','year'], how='outer')
+pop_ship.head(5)
+
+pop_ship = pop_ship[['county', 'state', 'mme', 'year', 'countyfips', 'population']]
+pop_ship.rename(columns={'countyfips':'FIPS'}, inplace = True)
+    
+pop_ship.sort_values(['county','state','year'], inplace = True)
+
+pop_ship.to_csv("pop_ship.csv",index = False)
