@@ -53,10 +53,11 @@ vs_collapsed = vs.groupby([vs['FIPS'], vs['Year'], vs['Drug/Alcohol Induced Caus
 
 state = vs_collapsed['County'].str.split(',', expand=True)
 vs_collapsed['State'] = state[1]
+vs_collapsed['County'] = state[0]
 
 drug_codes = ['D1', 'D2', 'D3', 'D4']
 vs_collapsed = vs_collapsed[vs_collapsed['Drug/Alcohol Induced Cause Code'].isin(drug_codes)]
-vs_collapsed = vs_collapsed.drop(['FIPS', 'Drug/Alcohol Induced Cause', 'County'], axis=1)
+vs_collapsed = vs_collapsed.drop(['Drug/Alcohol Induced Cause'], axis=1)
 vs_collapsed['Deaths'] = vs_collapsed['Deaths'].replace('Missing', 0)
 vs_collapsed['Deaths'] = vs_collapsed['Deaths'].astype(float)
 vs_collapsed['Year'] = vs_collapsed['Year'].astype(int)
@@ -64,8 +65,13 @@ vs_collapsed['Year'] = vs_collapsed['Year'].astype(int)
 print(vs_collapsed.head())
 print(vs_collapsed.dtypes)
 
-vs_state_year = vs_collapsed.groupby([vs_collapsed['State'], vs_collapsed['Year']]).sum()
-vs_state_year.reset_index(inplace=True)
-vs_state_year.head()
+# vs_state_year = vs_collapsed.groupby(['State', 'Year']).sum()
+# vs_state_year.reset_index(inplace=True)
+# vs_state_year.head()
 
-vs_state_year.to_csv('vs_state_year.csv')
+vs_county_state_year = vs_collapsed.groupby(['County', 'State', 'Year']).sum()
+vs_county_state_year.reset_index(inplace=True)
+vs_county_state_year['FIPS'] = vs_county_state_year['FIPS'].astype(int)
+vs_county_state_year.head()
+
+vs_county_state_year.to_csv('vs_county_state_year.csv')
