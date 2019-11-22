@@ -2,29 +2,38 @@ import pandas as pd
 import numpy as np
 
 # loading the merged population/shipments data
-original = pd.read_csv('merged.csv')
+pop_ship = pd.read_csv('pop_ship.csv')
+pop_ship = pop_ship[pop_ship['state'] != 'PR']
+pop_ship = pop_ship[pd.notnull(pop_ship['county'])]
+pop_ship['FIPS'] = pop_ship['FIPS'].fillna(value = '05099')
+pop_ship['FIPS'] = pop_ship['FIPS'].astype(int)
 
-# loading the cleaned vital statistics data by state and year
+# loading the cleaned vital statistics data by county, state, and year
 # sorted to make checking easier
-vitalstats = pd.read_csv('../10_code/vs_state_year.csv', index_col='Unnamed: 0')
+vitalstats = pd.read_csv('../10_code/vs_county_state_year.csv', index_col='Unnamed: 0')
 vitalstats['State'] = vitalstats['State'].str.replace(' ', '')
-vitalstats.sort_values(['State', 'Year'], inplace = True)
+vitalstats.sort_values(['County', 'State', 'Year'], inplace = True)
+vitalstats['County'] = vitalstats['County'].str.lower()
 
 # grouping original merged data by state and year
-original = original.groupby([original['BUYER_STATE'], original['year']], as_index = False).sum()
+# original = original.groupby([original['BUYER_STATE'], original['year']], as_index = False).sum()
 
-# renaming columns to match vital stats 
-original.rename(columns={'BUYER_STATE':'State', 'year':'Year'}, inplace = True)
+# renaming columns to match pop ship
+vitalstats.rename(columns={'County':'county', 'State':'state', 'Year':'year'}, inplace = True)
 
-# merge new grouped population/shipments data with vital stats data
+# merge population/shipments data with vital stats data on fips and year
 # sorted to make checking easier
-full_merge = pd.merge(original, vitalstats, how = 'outer', on = ['State', 'Year'])
-full_merge.sort_values(['State', 'Year'], inplace = True)
-full_merge.reset_index(inplace = True, drop = True)
+pop_ship_death = pd.merge(pop_ship, vitalstats, how = 'outer', on = ['FIPS', 'year'])
+pop_ship_death.sort_values(['county', 'state', 'year'], inplace = True)
+pop_ship_death.reset_index(inplace = True, drop = True)
 
-full_merge['deaths_percap'] = full_merge['Deaths']/full_merge['population']
-full_merge['mme_percap'] = full_merge['mme']/full_merge['population']
+pop_ship_death.drop(['county_y', 'state_y'], axis = 1, inplace = True)
+pop_ship_death.rename(columns={'county_x':'county', 'state_x':'state'}, inplace = True)
 
-full_merge.to_csv('full_merge.csv', index = False)
+pop_ship_death['deaths_percap'] = pop_ship_death['Deaths']/pop_ship_death['population']
+
+pop_ship_death['mme_percap'] = pop_ship_death['mme']/pop_ship_death['population']
+
+pop_ship_death.to_csv('pop_ship_death.csv', index = False)
 
 
