@@ -84,8 +84,8 @@ def did_plot_mme(df, state, policy_year, state_title):
                color = 'red', method = 'lm', se = True))
 
 def prepost_plot_deaths(state, policy_year, state_title):
-    print (ggplot(state, aes(x ='Year', y='deaths_percap',color = 'FIPS')) 
-         + geom_point(alpha=.2) 
+    print (ggplot(state, aes(x ='Year', y='deaths_percap', color = 'State')) 
+         + geom_point(alpha=.2, show_legend = False) 
          + scale_x_continuous(breaks = death_scale, limits = death_yrs) 
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Pre-Post Plot of Overdose Deaths'.format(state_title))
@@ -120,4 +120,5 @@ prepost_plot_deaths(tx, tx_policy, 'Texas')
 
 # Washington
 did_plot_deaths(wa_death_grouped, wa, wa_policy, 'Washington')
+# might help to set ylim(0, .0004)
 prepost_plot_deaths(wa, wa_policy, 'Washington')
