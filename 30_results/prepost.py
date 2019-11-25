@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from plotnine import *
 
-df = pd.read_csv('../20_intermediate_files/full_merge.csv')
+df = pd.read_csv('../20_intermediate_files/pop_ship_death.csv')
 df.head()
 
 # florida

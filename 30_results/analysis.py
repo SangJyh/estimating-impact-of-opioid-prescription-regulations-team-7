@@ -2,19 +2,15 @@ import pandas as pd
 import numpy as np
 from plotnine import *
 
-full_df = pd.read_csv('../20_intermediate_files/pop_ship_death.csv')
-full_df.head()
-
-df = full_df[['State', 'Year', 'FIPS', 'deaths_percap', 'mme_percap']]
-df_county = full_df[['State', 'Year', 'deaths_percap', 'mme_percap', 'FIPS']]
+df = pd.read_csv('../20_intermediate_files/pop_ship_death.csv')
+df.head()
 
 # function to get grouped datasets
 
 def grouped_data(df, state, comp_list):
     sub = df[df['State'].isin(comp_list)]
     sub['policy'] = np.where(sub['State'] == state, 'Policy', 'Non-policy')
-    grouped_df = sub.groupby(['policy','Year','FIPS']).mean()
-    grouped_df = grouped_df.reset_index()
+    grouped_df = sub
     return grouped_df
 
 # florida
@@ -26,9 +22,7 @@ fl_mme_comp = ['FL', 'GA', 'CA', 'NM']
 fl_death_grouped = grouped_data(df, 'FL', fl_death_comp)
 fl_mme_grouped = grouped_data(df, 'FL', fl_mme_comp)
 
-fl = df_county[df_county['State'] == 'FL']
-fl_new = fl[fl['FIPS'] != 12039]
-fl_new = fl_new[fl_new['FIPS'] != 12075]
+fl = df[df['State'] == 'FL']
 
 # texas
 tx_policy = 2007
@@ -57,11 +51,12 @@ def did_plot_deaths(df, state, policy_year, state_title):
          + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Diff-in-Diff Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
-            + ylim(0.00,0.00025)
          + scale_x_continuous(breaks = death_scale, limits= death_yrs) 
          #+ scale_y_continuous(breaks = death_scale, limits= death_yrs) 
-         + geom_smooth(data = state[state['Year'] <= policy_year], color='turquoise', method='lm') 
-         + geom_smooth(data = state[state['Year'] >= policy_year], color='turquoise', method='lm')
+         + geom_smooth(data = df[(df['Year'] <= policy_year) &
+                                 (df['policy'] == 'Policy')], color='turquoise', method='lm') 
+         + geom_smooth(data = df[(df['Year'] >= policy_year) &
+                                 (df['policy'] == 'Policy')], color='turquoise', method='lm')
          + geom_smooth(data = df[(df['Year'] <= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
                color = 'red', method = 'lm', se = True)
@@ -92,7 +87,7 @@ def prepost_plot_deaths(state, policy_year, state_title):
     print (ggplot(state, aes(x ='Year', y='deaths_percap',color = 'FIPS')) 
          + geom_point(alpha=.2) 
          + scale_x_continuous(breaks = death_scale, limits = death_yrs) 
-    + ylim(0.00,0.00025)         + geom_vline(xintercept = policy_year) 
+         + geom_vline(xintercept = policy_year) 
          + labs(title = '{0}: Pre-Post Plot of Overdose Deaths'.format(state_title))
          + ylab('Overdose Deaths per Capita')
          + geom_smooth(data = state[state['Year'] <= policy_year], color='red', method='lm') 
@@ -114,7 +109,6 @@ def prepost_plot_mme(state, policy_year, state_title):
 # Florida
 did_plot_deaths(fl_death_grouped, fl, fl_policy, 'Florida')
 did_plot_mme(fl_mme_grouped, fl, fl_policy, 'Florida')
-prepost_plot_deaths(fl_new, fl_policy, 'Florida')
 prepost_plot_deaths(fl, fl_policy, 'Florida')
 prepost_plot_mme(fl, fl_policy, 'Florida')
 # need to fix florida deaths
