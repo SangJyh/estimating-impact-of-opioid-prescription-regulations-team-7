@@ -24,8 +24,8 @@ vitalstats.rename(columns={'County':'county', 'State':'state', 'Year':'year'}, i
 # merge population/shipments data with vital stats data on fips and year
 # sorted to make checking easier
 pop_ship_death = pd.merge(pop_ship, vitalstats, how = 'outer', on = ['FIPS', 'year'])
-pop_ship_death.sort_values(['county', 'state', 'year'], inplace = True)
-pop_ship_death.reset_index(inplace = True, drop = True)
+# pop_ship_death.sort_values(['county', 'state', 'year'], inplace = True)
+# pop_ship_death.reset_index(inplace = True, drop = True)
 
 pop_ship_death.drop(['county_y', 'state_y'], axis = 1, inplace = True)
 pop_ship_death.rename(columns={'county_x':'county', 'state_x':'state'}, inplace = True)
