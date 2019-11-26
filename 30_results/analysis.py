@@ -63,6 +63,7 @@ def did_plot_deaths(df, state, policy_year, state_title):
          + geom_smooth(data = df[(df['Year'] >= policy_year) &
                                  (df['policy'] == 'Non-policy')], 
                color = 'red', method = 'lm'))
+#          + ylim(0, .0004))
     pass
 
 def did_plot_mme(df, state, policy_year, state_title):
